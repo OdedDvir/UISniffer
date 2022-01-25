@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "UISniffer": {
+      "commandName": "Project",
+      "commandLineArgs": "Access d:\\temp\\output.json"
+    }
+  }
+}
