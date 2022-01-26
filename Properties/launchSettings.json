@@ -2,7 +2,7 @@
   "profiles": {
     "UISniffer": {
       "commandName": "Project",
-      "commandLineArgs": "-title Access d:\\temp\\output.json"
+      "commandLineArgs": "-pid 63848 output.json"
     }
   }
 }

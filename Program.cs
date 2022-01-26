@@ -39,7 +39,7 @@ void Initialize(AutomationType selectedAutomationType)
     Elements.Add(desktopViewModel);
 }
 
-Initialize(AutomationType.UIA3);
+Initialize(AutomationType.UIA2);
 
 
 if (Environment.GetCommandLineArgs().Length < 4)
