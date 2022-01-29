@@ -24,7 +24,7 @@ namespace ConsoleApp1
             {
                 var ui = new UIElement();
                 ui.Name = e.Name;
-                ui.ControlType = e.ControlType;
+                ui.ControlType = e.ControlType.ToString();
                 //ui.Path = $"{currentPath}/{ui.Name}";
                 // ui.Value = e.ItemDetails.ToJson();
                 e.LoadChildren(true);
