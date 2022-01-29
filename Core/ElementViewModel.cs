@@ -52,7 +52,7 @@ public class ElementViewModel : ObservableObject
 
                 if (loadInnerChildren)
                 {
-                    childViewModel.LoadChildren(false);
+                    childViewModel.LoadChildren(true);
                     //                        childViewModel.LoadChildren(false);
                 }
             }

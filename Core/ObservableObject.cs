@@ -5,17 +5,17 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 public abstract class ObservableObject
 {
 
-    private readonly Dictionary<string, object> _backingFieldValues = new();
+    private readonly Dictionary<string, object> _backingFieldValues = new Dictionary<string, object>();
 
     /// <summary>
     /// Gets a property value from the internal backing field
     /// </summary>
-    protected T GetProperty<T>([CallerMemberName] string propertyName = null)
+    protected T GetProperty<T>(string propertyName = null)
     {
         if (propertyName == null)
         {
@@ -32,7 +32,7 @@ public abstract class ObservableObject
     /// <summary>
     /// Saves a property value to the internal backing field
     /// </summary>
-    protected bool SetProperty<T>(T newValue, [CallerMemberName] string propertyName = null)
+    protected bool SetProperty<T>(T newValue, string propertyName = null)
     {
         if (propertyName == null)
         {
