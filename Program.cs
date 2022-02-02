@@ -14,6 +14,18 @@ namespace ConsoleApp1
 {
     internal class Program
     {
+        static void ShowSyntax()
+        {
+            Console.WriteLine("Syntax:");
+            Console.WriteLine("   InspectUI -all <Output_File_Path>");
+            Console.WriteLine("   InspectUI -title <Application_Window_Title> <Output_File_Path>");
+            Console.WriteLine("   InspectUI -pid <Process_Id> <Output_File_Path>");
+            Console.WriteLine("Examples:");
+            Console.WriteLine("   InspectUI -all output.json");
+            Console.WriteLine("   InspectUI -title \"Word\" output.json");
+            Console.WriteLine("   InspectUI -pid 20020 output.json");
+        }
+
         static void Main(string[] args)
         {
             ObservableCollection<ElementViewModel> Elements = new ObservableCollection<ElementViewModel>();
@@ -50,26 +62,32 @@ namespace ConsoleApp1
                 Elements.Add(desktopViewModel);
             }
 
-            Initialize(AutomationType.UIA2);
-
-
-            if (args.Length < 3)
+            int argsCount = Environment.GetCommandLineArgs().Count();
+            // Get command line arguments
+            if (argsCount < 3)
             {
-                Console.WriteLine("Syntax:");
-                Console.WriteLine("   InspectUI -title <Application_Window_Title> <Output_File_Path>");
-                Console.WriteLine("   InspectUI -pid <Process_Id> <Output_File_Path>");
-                Console.WriteLine("Examples:");
-                Console.WriteLine("   InspectUI -title \"Word\" output.json");
-                Console.WriteLine("   InspectUI -pid 20020 output.json");
+                ShowSyntax();
                 return;
             }
-
-            // Get command line arguments
             string switchType = Environment.GetCommandLineArgs()[1];
-            string appIdentifier = Environment.GetCommandLineArgs()[2];
-            string outFileName = Environment.GetCommandLineArgs()[3];
+            string outFileName;
+            string appIdentifier = "Testing";
 
-            Console.WriteLine($"Searching for {appIdentifier}...");
+            switch (argsCount)
+            {
+                case 3:
+                    outFileName = Environment.GetCommandLineArgs()[2];
+                    break;
+                case 4:
+                    appIdentifier = Environment.GetCommandLineArgs()[2];
+                    outFileName = Environment.GetCommandLineArgs()[3];
+                    break;
+                default:
+                    ShowSyntax();
+                    return;
+            }
+
+            Initialize(AutomationType.UIA2);
             ElementViewModel appRoot;
             try
             {
@@ -77,11 +95,17 @@ namespace ConsoleApp1
                 {
                     case "-title":
                         //Search by window title
+                        Console.Write($"Searching for {appIdentifier}... ");
                         appRoot = Elements[0].Children.Where(e => e.Name.Contains(appIdentifier)).First();
                         break;
                     case "-pid":
                         //Search by process Id
+                        Console.Write($"Searching for {appIdentifier}... ");
                         appRoot = Elements[0].Children.Where(e => e.AutomationElement.Properties.ProcessId.ToString() == appIdentifier).First();
+                        break;
+                    case "-all":
+                        Console.Write($"Inspecting all apps... ");
+                        appRoot = Elements[0];
                         break;
                     default:
                         return;
@@ -92,7 +116,7 @@ namespace ConsoleApp1
                 Console.WriteLine("Could not find app.");
                 return;
             }
-            Console.WriteLine("App found!");
+            Console.WriteLine("Ok!");
             Console.WriteLine($"Writing JSON to file {outFileName}...");
             try
             {
