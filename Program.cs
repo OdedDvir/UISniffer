@@ -117,7 +117,7 @@ namespace ConsoleApp1
                 return;
             }
             Console.WriteLine("Ok!");
-            Console.WriteLine($"Writing JSON to file {outFileName}...");
+            Console.WriteLine($"Writing JSON to file {outFileName}. Please be patient...");
             try
             {
                 appRoot.LoadChildren(true);
