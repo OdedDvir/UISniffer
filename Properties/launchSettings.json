@@ -1,8 +1,7 @@
 {
   "profiles": {
     "UISniffer": {
-      "commandName": "Project",
-      "commandLineArgs": "-title Access d:\\aaaaa.json"
+      "commandName": "Project"
     }
   }
 }

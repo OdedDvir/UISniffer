@@ -120,13 +120,13 @@ namespace ConsoleApp1
             Console.WriteLine("Ok!");
             try
             {
-                Console.WriteLine("Scanning. Please be patient...");
+                Console.WriteLine("\nScanning. Please be patient...\n");
                 StringBuilder jsonUI = new StringBuilder();
                 int i = 1;
                 appRoot.LoadChildren(false);
                 foreach (ElementViewModel item in appRoot.Children)
                 {
-                    Console.WriteLine($"Scanning item {i++} : {item.Name} ...");
+                    Console.WriteLine($"Scanning item {i++} : \"{item.Name}\" ...");
                     try
                     {
                         jsonUI.Append(JsonConvert.SerializeObject(ScanElements(item), Formatting.Indented));
@@ -137,7 +137,7 @@ namespace ConsoleApp1
                         throw;
                     }
                 }
-                Console.WriteLine($"Writing JSON to file {outFileName}.");
+                Console.WriteLine($"\nWriting JSON to file {outFileName}.");
                 File.WriteAllText(outFileName, jsonUI.ToString(), Encoding.UTF8);
             }
             catch (Exception e)
@@ -145,7 +145,7 @@ namespace ConsoleApp1
                 Console.WriteLine(e.Message);
                 return;
             }
-            Console.WriteLine("All Done!");
+            Console.WriteLine("\nAll Done!");
         }
     }
 }
