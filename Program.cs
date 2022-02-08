@@ -34,13 +34,13 @@ namespace ConsoleApp1
 
             UIElement ScanElements(ElementViewModel e)
             {
-                var ui = new UIElement();
-                ui.Name = e.Name;
-                ui.ControlType = e.ControlType.ToString();
-                //ui.Path = $"{currentPath}/{ui.Name}";
-                // ui.Value = e.ItemDetails.ToJson();
                 e.LoadChildren(true);
-                ui.ChildrenCount = e.Children.Count;
+                var ui = new UIElement
+                {
+                    Name = e.Name,
+                    ControlType = e.ControlType.ToString(),
+                    ChildrenCount = e.Children.Count
+                };
                 if (ui.ChildrenCount > 0)
                 {
                     ui.Children = new List<UIElement>();
@@ -63,22 +63,22 @@ namespace ConsoleApp1
             }
 
             int argsCount = Environment.GetCommandLineArgs().Count();
-            // Get command line arguments
-            if (argsCount < 3)
-            {
-                ShowSyntax();
-                return;
-            }
-            string switchType = Environment.GetCommandLineArgs()[1];
+            string switchType = String.Empty;
             string outFileName;
-            string appIdentifier = "Testing";
-
+            string appIdentifier = String.Empty;
+            // Get command line arguments
             switch (argsCount)
             {
+                case 1:
+                    switchType = "-all";
+                    outFileName = $"{Directory.GetCurrentDirectory()}\\AllApps.json";
+                    break;
                 case 3:
+                    switchType = Environment.GetCommandLineArgs()[1];
                     outFileName = Environment.GetCommandLineArgs()[2];
                     break;
                 case 4:
+                    switchType = Environment.GetCommandLineArgs()[1];
                     appIdentifier = Environment.GetCommandLineArgs()[2];
                     outFileName = Environment.GetCommandLineArgs()[3];
                     break;
@@ -95,12 +95,12 @@ namespace ConsoleApp1
                 {
                     case "-title":
                         //Search by window title
-                        Console.Write($"Searching for {appIdentifier}... ");
-                        appRoot = Elements[0].Children.Where(e => e.Name.Contains(appIdentifier)).First();
+                        Console.Write($"Searching for {appIdentifier} ... ");
+                        appRoot = Elements[0].Children.Where(e =>  e.Name != null && e.Name.Contains(appIdentifier)).First();
                         break;
                     case "-pid":
                         //Search by process Id
-                        Console.Write($"Searching for {appIdentifier}... ");
+                        Console.Write($"Searching for {appIdentifier} ... ");
                         appRoot = Elements[0].Children.Where(e => e.AutomationElement.Properties.ProcessId.ToString() == appIdentifier).First();
                         break;
                     case "-all":
@@ -108,6 +108,7 @@ namespace ConsoleApp1
                         appRoot = Elements[0];
                         break;
                     default:
+                        ShowSyntax();
                         return;
                 }
             }
@@ -117,19 +118,27 @@ namespace ConsoleApp1
                 return;
             }
             Console.WriteLine("Ok!");
-            Console.WriteLine($"Writing JSON to file {outFileName}. Please be patient...");
             try
             {
-                appRoot.LoadChildren(true);
-                string jsonUI = JsonConvert.SerializeObject(ScanElements(appRoot), Formatting.Indented);
-                //string jsonUI = JsonConvert.SerializeObject(appRoot, Formatting.Indented, new JsonSerializerSettings
-                //    {
-                //        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                //        NullValueHandling = NullValueHandling.Ignore,          
-                //    }
-                //);
-                File.WriteAllText(outFileName, jsonUI, Encoding.UTF8);
+                Console.WriteLine("Scanning. Please be patient...");
+                StringBuilder jsonUI = new StringBuilder();
+                int i = 1;
+                appRoot.LoadChildren(false);
+                foreach (ElementViewModel item in appRoot.Children)
+                {
+                    Console.WriteLine($"Scanning item {i++} : {item.Name} ...");
+                    try
+                    {
+                        jsonUI.Append(JsonConvert.SerializeObject(ScanElements(item), Formatting.Indented));
+                    }
+                    catch (Exception)
+                    {
 
+                        throw;
+                    }
+                }
+                Console.WriteLine($"Writing JSON to file {outFileName}.");
+                File.WriteAllText(outFileName, jsonUI.ToString(), Encoding.UTF8);
             }
             catch (Exception e)
             {
